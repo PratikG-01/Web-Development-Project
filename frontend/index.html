@@ -1,0 +1,247 @@
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <style>
+        /* Scroll container to allow horizontal scrolling */
+        .scroll-container {
+          overflow-x: auto;
+          white-space: nowrap;
+          padding: 20px 0;
+          scroll-behavior: smooth;
+          display: flex;
+          justify-content: flex-start;
+        }
+
+        .college-link {
+      text-decoration: none; /* Removes underline from the link */
+      color: inherit; /* Keeps the text color as it is (the same as the card text) */
+    }
+
+        /* Card styling */
+        .college-card {
+          display: inline-block;
+          width: 260px;
+          margin-right: 15px;
+          vertical-align: top;
+          background-color: #eef3f9; /* More pleasing light blue-gray */
+          border: 2px solid #0d6efd;
+          border-radius: 10px;
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+          margin-bottom: 20px; /* Add space between rows */
+        }
+
+        /* Hover effect for cards */
+        .college-card:hover {
+          transform: scale(1.03);
+          box-shadow: 0 6px 20px rgba(13, 110, 253, 0.3); /* Light blue shadow */
+          z-index: 1;
+          position: relative;
+        }
+
+        /* Card body styling */
+        .college-card .card-body {
+          height: 150px;
+          overflow: hidden;
+        }
+
+        /* Title and text styling */
+        .college-card .card-body h5 {
+          font-size: 1.1rem;
+          font-weight: bold;
+          white-space: normal; /* Allows multiple lines for the title */
+          word-wrap: break-word; /* Breaks long words and prevents overflow */
+          text-overflow: ellipsis; /* Adds "..." if text overflows */
+          overflow: hidden; /* Hides any overflowing text */
+        }
+
+        .college-card .card-body p {
+          font-size: 0.9rem;
+          color: #555;
+        }
+
+        /* General styling for the body */
+        body {
+          font-family: Arial, sans-serif;
+          background-color: #f8f9fa;
+        }
+
+        /* Title styling */
+        h3 {
+          font-size: 1.8rem;
+          font-weight: 600;
+          color: #333;
+        }
+
+        /* Footer and pagination buttons */
+        footer {
+          background-color: #f1f1f1;
+          padding: 20px 0;
+        }
+
+        .btn-group .btn {
+          border-radius: 5px;
+          font-size: 0.9rem;
+        }
+
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 768px) {
+          .college-card {
+            width: 100%;
+            margin-right: 0;
+            margin-bottom: 15px;
+          }
+
+          .scroll-container {
+            padding: 10px 0;
+          }
+        }
+        /*login banner  */
+        .login-banner {
+    width: 100%;
+    background: linear-gradient(135deg, #0052d4, #4364f7, #6fb1fc);
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding: 1rem 0;
+    box-shadow: 0 4px 15px rgba(0, 82, 212, 0.3);
+    animation: slideFade 0.8s ease-out, pulseGlow 2s infinite;
+  }
+
+  @keyframes slideFade {
+    from {
+      opacity: 0;
+      transform: translateY(-15px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes pulseGlow {
+    0% {
+      box-shadow: 0 0 0 0 rgba(0, 82, 212, 0.6);
+    }
+    70% {
+      box-shadow: 0 0 20px 10px rgba(0, 82, 212, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(0, 82, 212, 0);
+    }
+  }
+      </style>
+      <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7"
+        crossorigin="anonymous"
+      />
+      <title>Home</title>
+    </head>
+    <body class="d-flex flex-column min-vh-100">
+      <!-- Header/Navbar -->
+      <header>
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+          <div class="container">
+            <a class="navbar-brand" href="/index.html">CollegeSearch</a>
+            <!-- Optional Brand -->
+            <button
+              class="navbar-toggler"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#navbarNav"
+              aria-controls="navbarNav"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+            >
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+              <div class="navbar-nav justify-content-center w-100">
+                <a class="nav-link active mx-3" href="/index.html">Home</a>
+                <a class="nav-link active mx-3" href="/Colleges.html">Colleges</a>
+                <a class="nav-link mx-3" href="/CollegesAccordingToStates.html"
+                  >States</a
+                >
+                <a class="nav-link mx-3" href="/SavedColleges.html" id="savedData" style="display: none;"
+                  >Saved</a
+                >
+                <a class="nav-link mx-3" href="/SearchPage.html"
+                  ><span>&#128269;</span>
+                </a>
+              </div>
+
+              <div id="profileInfo">
+                
+              </div>
+            </div>
+          </div>
+        </nav>
+        
+      </header>
+      
+     <div id="loadingScreen">
+      <div style="display: flex; justify-content: center; align-items: center; height: 200px;" >
+        <h1>Loading...</h1>
+      </div>
+     </div>
+
+      <!-- Add more static or dynamic cards -->
+      <div class="container" id="mostVisitedCollegesContainer" style="display: none;">
+        <h3 class="mt-5 mb-3">🔥 Top Most Visited Colleges on Our Platform</h3>
+        <div class="scroll-container d-flex flex-nowrap" id="mostVisitedColleges" style="display: none;">
+          <!-- Cards will be added here -->
+        </div>
+        <p class="mt-3 text-muted" style="font-size: 1rem;">
+      Explore the most visited colleges. To see a full list of all colleges in India, go to Colleges tab.
+    </p>
+    <div class="login-banner text-center" id="loginPrompt" style="display: none;">
+      🔒 <strong>Login to save colleges you're interested in</strong>
+    </div>
+      </div>
+
+    
+     
+      <!-- Main Content -->
+      <main class="flex-grow-1 text-center py-5">
+        
+        <div class="container">
+          <div id="courses-container" class="row g-2">       </div>
+          <small class="d-block text-muted text-start mb-2">
+            📌 These tags are shown based on course info collected when students explore colleges.
+          </small>
+          
+          <div class="text-center my-3" id="loadMreBtn" style="display: none;">
+            <button id="loadMoreCoursesBtn" class="btn btn-secondary">↓ Load More</button>
+            <div id="goBack" style="display: none;">
+              <button type="button" class="btn btn-outline-success" onclick="reloadCourses()">↑</button>
+            </div>
+          </div>
+
+          <!-- <div class="row justify-content-center g-4" id="cardsInside"> -->
+            <!-- Cards will be injected here -->
+          </div>
+        </div>
+        
+      </main>
+
+      <footer class="bg-light py-3 mt-auto">
+        <div class="container d-flex justify-content-center">
+
+        <div class="container d-flex justify-content-center">
+          <p>&copy; 2025 CollegeSearch | All rights Reserved</p>
+        </div>
+      </footer>
+
+     
+
+      <script src="index.js"></script>
+      <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq"
+        crossorigin="anonymous"
+      ></script>
+    </body>
+  </html>

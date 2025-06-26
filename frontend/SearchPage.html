@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7"
+      crossorigin="anonymous"
+    />
+    <title>Search</title>
+  </head>
+  <body class="d-flex flex-column min-vh-100">
+    <!-- Header/Navbar -->
+    <header>
+      <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container">
+          <a class="navbar-brand" href="/index.html">CollegeSearch</a>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="navbar-nav justify-content-center w-100">
+              <a class="nav-link active mx-3" href="/index.html">Home</a>
+              <a class="nav-link active mx-3" href="/Colleges.html">Colleges</a>
+
+              <a class="nav-link mx-3" href="/CollegesAccordingToStates.html"
+                >States</a
+              >
+              <a
+                class="nav-link mx-3"
+                href="/SavedColleges.html"
+                id="savedData"
+                style="display: none"
+                >Saved</a
+              >
+              <a class="nav-link mx-3" href="/SearchPage.html"
+                ><span>&#128269;</span>
+              </a>
+            </div>
+            <div id="profileInfo"></div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow-1 text-center py-5">
+      <div class="container">
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-md-6">
+              <small id="resultsInfo" class="text-muted"
+                >Start typing to search...</small
+              >
+              <form>
+                <div class="input-group mb-3">
+                  <!-- <select class="form-select" style="max-width: 150px">
+                    <option selected>All Categories</option>
+                    <option value="1">Category 1</option>
+                    <option value="2">Category 2</option>
+                    <option value="3">Category 3</option>
+                  </select> -->
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Search..."
+                    id="searchInput"
+                  />
+                  <button class="btn btn-primary" onclick="searchBtn(event)">
+                    Search
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="row justify-content-center g-4" id="cardsInside"></div>
+      </div>
+    </main>
+
+    <!-- Footer with Pagination -->
+    <footer class="bg-light py-3">
+      <div class="container d-flex justify-content-center">
+        <div
+          class="btn-group"
+          role="group"
+          aria-label="Pagination"
+          id="pagination"
+          style="display: none"
+        >
+          <button
+            type="button"
+            class="btn btn-outline-primary"
+            onclick="firstBtn()"
+          >
+            First
+          </button>
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            onclick="prevBtn()"
+            id="prevBtn"
+          >
+            Previous
+          </button>
+          <button
+            type="button"
+            class="btn btn-outline-success"
+            onclick="nextBtn()"
+            id="nextBtn"
+          >
+            Next
+          </button>
+        </div>
+      </div>
+    </footer>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq"
+      crossorigin="anonymous"
+    ></script>
+
+    <script>
+      let currentPage = 0;
+      let searchInput = "";
+      const pagination = document.getElementById("pagination");
+
+      function checkAuthAndRenderProfile() {
+        fetch("https://search-college-backend.vercel.app/api/user/myProfile", {
+          credentials: "include",
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            if (res.statusCode === 200) {
+              document.getElementById("savedData").style.display = "block";
+
+              document.getElementById("profileInfo").innerHTML = `
+        <div class="dropdown show">
+          <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            ${res.data.email}
+          </button>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" id="logoutBtn" href="#">Logout</a>
+          </div>
+        </div>
+        `;
+
+              document
+                .getElementById("logoutBtn")
+                .addEventListener("click", () => {
+                  fetch(
+                    "https://search-college-backend.vercel.app/api/user/logout",
+                    {
+                      method: "POST",
+                      credentials: "include",
+                    }
+                  )
+                    .then((res) => res.json())
+                    .then((res) => {
+                      if (res.statusCode === 200) {
+                        window.location.href = "/index.html";
+                      } else {
+                        alert(
+                          `${res.message}, session expired try logging in again!!!`
+                        );
+                        window.location.href = "/index.html";
+                      }
+                    })
+                    .catch((err) => {
+                      // console.log(err);
+                    });
+                });
+            } else {
+              document.getElementById("savedData").style.display = "none";
+              document.getElementById("profileInfo").innerHTML = `
+        <a
+          class="btn btn-outline-primary ms-lg-3 mt-2 mt-lg-0"
+          href="/login.html"
+          id="loginBtn"
+        >Login</a>
+        `;
+            }
+          })
+          .catch((err) => {
+            // console.log(err);
+          });
+      }
+
+      window.onload = checkAuthAndRenderProfile;
+
+      const nextBtn = () => {
+        currentPage++;
+        if (document.getElementById("searchInput").value.trim() === "") {
+          alert("Please enter a search term before proceeding.");
+          currentPage = 0;
+          return;
+        }
+        fetchedCollegeData(
+          `https://search-college-backend.vercel.app/api/colleges/search/${searchInput}?page=${currentPage}`
+        );
+      };
+
+      const prevBtn = () => {
+        if (currentPage > 0) {
+          currentPage--;
+          fetchedCollegeData(
+            `https://search-college-backend.vercel.app/api/colleges/search/${searchInput}?page=${currentPage}`
+          );
+        }
+      };
+
+      const firstBtn = () => {
+        currentPage = 0;
+        fetchedCollegeData(
+          `https://search-college-backend.vercel.app/api/colleges/search/${searchInput}?page=${currentPage}`
+        );
+      };
+
+      const searchBtn = (event) => {
+        event.preventDefault();
+        currentPage = 0; // reset to page 0 on new search
+        searchInput = document.getElementById("searchInput").value.trim();
+        if (searchInput !== "") {
+          fetchedCollegeData(
+            `https://search-college-backend.vercel.app/api/colleges/search/${searchInput}?page=${currentPage}`
+          );
+        } else {
+          alert("Please enter a search term.");
+        }
+      };
+
+      const fetchedCollegeData = (link) => {
+        document.getElementById("cardsInside").innerHTML = "";
+        fetch(link)
+          .then((response) => response.json())
+          .then((data) => {
+            const cardsInside = document.getElementById("cardsInside");
+
+            if (!data.data || data.data.length === 0) {
+              cardsInside.innerHTML =
+                currentPage === 0
+                  ? `<h1>${data.message || "No results found."}</h1>`
+                  : `<h1>That's all we could find!</h1>`;
+
+              pagination.style.display = currentPage === 0 ? "none" : "flex";
+              document.getElementById("nextBtn").disabled = true;
+              document.getElementById("prevBtn").disabled = currentPage === 0;
+              return;
+            }
+
+            pagination.style.display = "flex";
+            document.getElementById("nextBtn").disabled = false;
+            document.getElementById("prevBtn").disabled = currentPage === 0;
+
+            cardsInside.innerHTML = data.data
+              .map((item) => {
+                return `
+      <div class="col-auto">
+        <a href="/InsideCollege.html?id=${item._id}" style="text-decoration:none;" target="_blank">
+          <div class="card border-info mb-3" style="max-width: 18rem" title="${item.name}">
+            <div class="card-header text-truncate">
+              📌 ${item.state}, ${item.city}
+            </div>
+            <div class="card-body">
+              <h5 class="card-title text-start text-truncate">
+                🏫 ${item.name}
+              </h5>
+              <p class="card-text text-start">Dist- ${item.district}</p>
+            </div>
+          </div>
+        </a>
+      </div>
+    `;
+              })
+              .join("");
+          })
+          .catch((error) => {
+            // console.error("Error fetching data:", error);
+          });
+      };
+
+      const resultInfo = document.getElementById("resultsInfo");
+      let typingTimer;
+
+      const updateResultCount = (searchTerm) => {
+        fetch(
+          `https://search-college-backend.vercel.app/api/colleges/searchCount/${searchTerm}`
+        )
+          .then((res) => res.json())
+          .then((data) => {
+            const count = data.data.total;
+            resultInfo.innerText =
+              count > 0
+                ? `${count} result${count === 1 ? "" : "s"} found`
+                : "No results found";
+          })
+          .catch(() => {
+            resultInfo.innerText = "Error fetching result count.";
+          });
+      };
+
+      document.getElementById("searchInput").addEventListener("input", (e) => {
+        clearTimeout(typingTimer);
+        const input = e.target.value.trim();
+        if (input.length > 2) {
+          typingTimer = setTimeout(() => updateResultCount(input), 300);
+        } else {
+          resultInfo.innerText = "Start typing to search...";
+        }
+      });
+    </script>
+  </body>
+</html>
